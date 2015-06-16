@@ -141,6 +141,23 @@ class CacheTests: XCTestCase {
         self.waitForExpectationsWithTimeout(1, handler: nil)
     }
     
+    func testFetchMemory() {
+        let stringCache = Cache<String>(name: self.name)
+        let value = "foo"
+        let key = "bar"
+        let expectation = self.expectationWithDescription(self.name)
+
+        XCTAssertNil(stringCache.fetchFromMemory(key: key))
+        
+        stringCache.set(value: value, key: key) { setValue in
+            XCTAssertEqual(stringCache.fetchFromMemory(key: key)!, value)
+            XCTAssertNil(stringCache.fetchFromMemory(key: value))
+            expectation.fulfill()
+        }
+        
+        self.waitForExpectationsWithTimeout(1, handler: nil)
+    }
+    
     // MARK: fetch
     
     func testFetchOnSuccess_AfterSet_WithKey_ExpectSyncSuccess () {

@@ -112,6 +112,14 @@ public class Cache<T : DataConvertible where T.Result == T, T : DataRepresentabl
         return fetch
     }
     
+    public func fetchFromMemory(#key : String, formatName : String = HanekeGlobals.Cache.OriginalFormatName) -> T? {
+        if let (_, memoryCache, _) = self.formats[formatName], let wrapper = memoryCache.objectForKey(key) as? ObjectWrapper {
+            return wrapper.value as? T
+        } else {
+            return nil
+        }
+    }
+    
     public func fetch(#keys : [String], formatName : String = HanekeGlobals.Cache.OriginalFormatName, success succeed : Fetch<[String:T]>.Succeeder? = nil) -> Fetch<[String:T]> {
         let mainFetch = Cache.buildMultiFetch(success: succeed)
         var result = [String:T]()
